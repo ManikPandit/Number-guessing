@@ -1,0 +1,120 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number Guessing Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f9;
+            color: #333;
+            padding: 20px;
+        }
+        .game-container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .btn {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        #output {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>Number Guessing Game</h1>
+        <p>Select a difficulty level:</p>
+        <button class="btn" onclick="startGame('easy')">Easy (1-10)</button>
+        <button class="btn" onclick="startGame('medium')">Medium (1-50)</button>
+        <button class="btn" onclick="startGame('hard')">Hard (1-100)</button>
+        <div id="game" style="display: none;">
+            <p id="game-instructions"></p>
+            <input type="number" id="user-input" placeholder="Enter your guess" />
+            <button class="btn" id="submit-btn" onclick="processGuess()">Submit</button>
+        </div>
+        <p id="output"></p>
+    </div>
+
+    <script>
+        let targetNumber, attempts, maxRange;
+
+        // Start the game
+        function startGame(level) {
+            document.getElementById("game").style.display = "block";
+            document.getElementById("output").textContent = "";
+            document.getElementById("user-input").value = "";
+            document.getElementById("user-input").focus();
+
+            // Set difficulty level
+            if (level === "easy") maxRange = 10;
+            if (level === "medium") maxRange = 50;
+            if (level === "hard") maxRange = 100;
+
+            targetNumber = Math.floor(Math.random() * maxRange) + 1;
+            attempts = 0;
+
+            document.getElementById("game-instructions").textContent = 
+                `I have chosen a number between 1 and ${maxRange}. Try to guess it!`;
+        }
+
+        // Process user's guess
+        function processGuess() {
+            const userInput = document.getElementById("user-input").value;
+            const userGuess = parseInt(userInput, 10);
+            attempts++;
+
+            if (isNaN(userGuess) || userGuess < 1 || userGuess > maxRange) {
+                document.getElementById("output").textContent = `Please enter a number between 1 and ${maxRange}.`;
+                return;
+            }
+
+            if (userGuess < targetNumber) {
+                document.getElementById("output").textContent = "Too low! Try again.";
+            } else if (userGuess > targetNumber) {
+                document.getElementById("output").textContent = "Too high! Try again.";
+            } else {
+                document.getElementById("output").textContent = 
+                    `🎉 Congratulations! You guessed the right number ${targetNumber} in ${attempts} attempts.`;
+                resetGame();
+            }
+
+            // Clear the input field for the next guess
+            document.getElementById("user-input").value = "";
+            document.getElementById("user-input").focus();
+        }
+
+        // Listen for the Enter key
+        document.addEventListener("keydown", function (event) {
+            if (event.key === "Enter" && document.getElementById("game").style.display === "block") {
+                processGuess();
+            }
+        });
+
+        // Reset the game
+        function resetGame() {
+            document.getElementById("game").style.display = "none";
+            document.getElementById("output").textContent += " Play again by selecting a difficulty level!";
+        }
+    </script>
+</body>
+</html>
